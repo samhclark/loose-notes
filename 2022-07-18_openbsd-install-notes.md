@@ -148,5 +148,38 @@ Choose all the file sets and get em with http.
 
 ## Post Install
 
-TBD. 
+TODO is fix the Alacritty term info stuff.
+In the meantime, do this before connecting with SSH
+
+```
+TERM=xterm-256color ssh user@openbsd
+```
+
+First thing's first, we gotta let `wheel` do root stuff
+
+```
+$ su root
+# cp /etc/examples/doas.conf /etc/doas.conf
+```
+
+While we're `root` change the root password to something harder.
+I know you set it to something easy during install, you had to type it. 
+But change it to something random with your password manager.
+
+```
+# passwd root
+# exit
+$ 
+```
+
+Now we're looking good.
+Let's update
+
+```
+doas syspatch
+```
+
+There is still more to do...but that's TBD
+
+
 

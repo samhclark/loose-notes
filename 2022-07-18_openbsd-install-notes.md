@@ -204,7 +204,21 @@ Turn the system off with
 doas shutdown -hp now
 ```
 
-There is still more to do...but that's TBD
+Repeat as needed.
+`syspatch` might need to update itself before installing patches.
 
+Go throgh the rest of the `afterboot` steps just to jog your memory here.
 
+We're gonna do the rest with Ansible so let's wrap up.
+Make sure that your SSH public keys are on the router in `authorized_keys`. 
+Make sure you disabled password login in `/etc/ssh/sshd_config`.
+Install Python because Ansible needs it:
 
+```
+doas pkg_add python
+```
+
+When it complains that it is ambiguous, choose one however you want, I guess.
+I chose 3.9 because I'm thinking it'll get fewer updates at this point (3.10.5 was released today).
+Copy the path to the tool since we'll need to give it to Ansible.
+Mine was `/usr/local/bin/python3`

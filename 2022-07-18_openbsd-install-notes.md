@@ -39,12 +39,14 @@ sh MAKEDEV sd0
 sh MAKEDEV sd1
 sh MAKEDEV sd2
 sh MAKEDEV sd3
+sh MAKEDEV sd4
 ```
 
 `sd0` is the target SSD where we're actually gonna install things.
 `sd1` is the USB that has the OpenBSD installed.
 `sd2` is the USB that will be used as a keydisk.
-`sd3` doesn't exist yet but will be the encrypted psuedo-device.
+`sd3` is the USB that will be used as a _backup_ of our keydisk.
+`sd4` doesn't exist yet but will be the encrypted psuedo-device.
 
 Then you kinda follow the OpenBSD FAQ instructions.
 
@@ -55,6 +57,7 @@ But I _am_ worried about destroying all the existing partition table info.
 ```
 dd if=/dev/urandom of=/dev/rsd0c bs=1m count=100
 dd if=/dev/urandom of=/dev/rsd2c bs=1m count=100
+dd if=/dev/urandom of=/dev/rsd3c bs=1m count=100
 ```
 
 That `rsdXc` thing means "**r**aw **sd0** **c**omplete disk".
@@ -80,9 +83,9 @@ sd0> a a
 # If it complains that the partition already exists 'z' will delete them all.
 # But then you need to go back and repeat the `dd` and `fdisk` commands for sd0.
 offset: [1024]
-size: [1234567689] *
+size: [2500068623] 50%
 FS type: [4.2BSD] RAID
-# The '*' is short for "the rest of the free space"
+# way under provisioning because the filesystem doesn't do TRIM and this is a 12-year-old SSD
 sd0*> w
 sd0> q
 No label changes.
@@ -122,8 +125,23 @@ bioctl -c C -k sd2a -l sd0a softraid0
 ```
 
 It should say something about how the thing is created and attached as sd3.
-At this point sd3 is a logical device, psuedo-device. 
+At this point sd4 is a logical device, psuedo-device. 
 You use it and write to it like it's plain, but it'll be encrypted and written to sd0.
+
+Make a copy of the keydisk.
+
+```
+fdisk -iy sd3
+disklabel -E sd3
+sd2> a a
+offset: [64]
+size: [987654321] 1M
+FS type: [4.2BSD] RAID
+sd2*> w
+sd2> q
+dd bs=8192 seek=1 skip=1 if=/dev/rsd2a of=/dev/rsd3a
+```
+
 Now you `exit` the shell and it will return you to the installer.
 
 `I` to proceed with the normal install.
@@ -136,13 +154,14 @@ No to root login.
 Yes create a new user (should automatically add them to `wheel` if you do it now).
 
 When you get to the disk part, that's the important part.
-It asks "which disk do you want to set up" or something like that and you need to choose sd3. 
+It asks "which disk do you want to set up" or something like that and **you need to choose sd4**. 
 
 ```
-Which disk is the root disk? ('?' for details) [sd0] sd3
+Which disk is the root disk? ('?' for details) [sd0] sd4
 ```
 
-You can let the installer auto partition it. 
+Choose whole disk GPT.
+You can let the installer auto partition it.
 Then uhh, that's about it. 
 Choose all the file sets and get em with http. 
 
@@ -177,6 +196,12 @@ Let's update
 
 ```
 doas syspatch
+```
+
+Turn the system off with
+
+```
+doas shutdown -hp now
 ```
 
 There is still more to do...but that's TBD

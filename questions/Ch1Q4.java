@@ -1,6 +1,6 @@
 import java.util.HashSet;
 
-public class Palindrome {
+public class Ch1Q4 {
     public static void main(String[] args) {
         String input = "Star Trek";
         System.out.println(isPermutationPalindrome(input));

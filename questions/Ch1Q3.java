@@ -1,6 +1,4 @@
-
-
-public class Main {
+public class Ch1Q3 {
     public static void main(String[] args) {
         char[] input = "A B C          ".toCharArray();
         int len = 7;

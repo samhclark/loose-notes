@@ -1,6 +1,6 @@
 import java.util.HashSet;
 
-class App {
+class Ch1Q1Q2 {
     public static void main(String[] args) {
         var result = isUniqueBitwiseAscii(args[0]);
         if (result) {

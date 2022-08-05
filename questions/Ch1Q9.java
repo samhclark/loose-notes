@@ -10,10 +10,17 @@ public class Ch1Q9 {
         }
 
         var sb = new StringBuilder(2 * a.length());
-        String bigstring = sb.append(a.substring(a.length() / 2))
+        // This is wild, no need to build the string weird like this.
+        // Check for a counter example before making it complicated.
+        // String bigstring = sb.append(a.substring(a.length() / 2))
+        //     .append(a)
+        //     .append(a.substring(0, a.length() / 2))
+        //     .toString();
+
+        String bigstring = sb.append(a)
             .append(a)
-            .append(a.substring(0, a.length() / 2))
             .toString();
+        
         
         return bigstring.contains(b);
     }

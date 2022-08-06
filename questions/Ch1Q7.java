@@ -1,9 +1,12 @@
 public class Ch1Q7 {
 
     public static void main(String[] args) {
-        final int[][] input = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 0, 1, 2}, {3, 4, 5, 6}};
+        final int[][] input = new int[8][8];
+        for (int i = 0; i < 64; i++) {
+            input[i/8][i%8] = i+1;
+        }
         printMatrix(input);
-        printMatrix(whatTheBookSays(input));
+        printMatrix(rotate90(input));
     }
 
     // Rotate a NxN matrix by 90 degrees where each element 4 bytes
@@ -38,6 +41,7 @@ public class Ch1Q7 {
         //   i: 2,2 -> 0,2
         // 
         // using second array
+        // ```
         // int[][] out = new int[N][N];
         // for (int i = 0; i < N; i++) {
         //     for (int j = 0; j < N; j++) {
@@ -45,6 +49,7 @@ public class Ch1Q7 {
         //     }
         // }
         // return out;
+        // ```
 
         // in place using XOR
         //
@@ -61,40 +66,64 @@ public class Ch1Q7 {
         //
         // so the outmost loop indicates what ring we're on
         // I'll use the same term, "layer" cause it's growing on me
-        final int numLayers = (N + 1) / 2;
-        for (int layer = 0; layer < numLayers; layer++) {
+        //
+        // why N/2 and not N+1/2? If you have at 3x3 matrix, although you have 2 layers,
+        // you don't actually want to move anything on that inner layer, because there
+        // is only one element so it's already in the right place
+        for (int layer = 0; layer < N / 2; layer++) {
             // Then we need to look at how many of these elements to move
             // In a 4x4 matrix, we do three rotations in the outer layer.
             // then we do one rotation in the inner layer
+            // 
+            // so we're going to define a start and end point for our iteration
+            // you can just imagine that we're looking at the top of the matrix
+            int start = layer;
             int end = N - 1 - layer;
             for (int i = layer; i < end; i++) {
+                
+                // Rotate them all counterclockwise,
+                // but you want to move through all the points clockwise
+                // so you don't overwrite the next one you need to move
+                // 
+                // The tricky part here is how to actually write the coords
+                // that point to the element on each side.
+                //
+                // top:
+                //   row: the same as the layer we're in.
+                //   col: what we're iterating through (i)
+                // left:
+                //   row: what we've called `end` minus `i` because we need to be moving up
+                //   col: is the layer we're in
+                // right:
+                //   row: moves down. just i.
+                //   col: it's what we've called `end`
+                // bottom:
+                //   row: fixed, and what we called `end`?
+                //   col: moves right. `end` + `layer` - `i`? Which is just...N-1-i.
 
-                // Rotate them all to the left.
-                int temp = in[layer][i];
+                int backwardsIterator = N - 1 - i; // This works because i already takes `layer` into account.
 
-                // Transpose, then reverse the row
-                in[i][layer] = in[layer][i];
+                int temp = in[start][i];
+
+                // Move the right to the top
+                in[start][i] = in[i][end];
+
+                // Move the bottom to the right
+                in[i][end] = in[end][backwardsIterator]; // wrong: N - 1 - layer - i
+
+                // Move the left to the bottom
+                in[end][backwardsIterator] = in[backwardsIterator][start];
+
+                // Move the top to the left (but pull from temp)
+                in[backwardsIterator][start] = temp;
             }
         }
         return in;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // I don't really get the way the solution describes it...gonna work it out to see
+    //
+    // Okay now I get it.
     private static int[][] whatTheBookSays(int[][] matrix) {
         if (matrix.length == 0 || matrix.length != matrix[0].length) {
             throw new RuntimeException("rotate90 requires the input to be square (NxN)");
@@ -119,10 +148,13 @@ public class Ch1Q7 {
 
     // For debugging
     private static void printMatrix(int[][] matrix) {
-        System.out.print("\n   0 1 2 4\n   -------\n");
+        System.out.print("\n    0  1  2  4  5  6  7  8\n  ------------------------\n");
         for (int i = 0; i < matrix.length; i++) {
             System.out.print(i + "| ");
             for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] < 10) {
+                    System.out.print(" ");
+                }
                 System.out.print(matrix[i][j] + " ");
             }
             System.out.print("\n");

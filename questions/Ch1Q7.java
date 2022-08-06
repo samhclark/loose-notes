@@ -51,8 +51,7 @@ public class Ch1Q7 {
         // return out;
         // ```
 
-        // in place using XOR
-        //
+        // in place using XOR?
         // XOR has got to be the way, right? Should allow me to mask it in and out
         //
         // No. Wrote a bunch of different variations and I can't get it to work. 
@@ -72,8 +71,8 @@ public class Ch1Q7 {
         // is only one element so it's already in the right place
         for (int layer = 0; layer < N / 2; layer++) {
             // Then we need to look at how many of these elements to move
-            // In a 4x4 matrix, we do three rotations in the outer layer.
-            // then we do one rotation in the inner layer
+            // In a 4x4 matrix, we do three rotations per side in the outer layer.
+            // then we do one per side rotation in the inner layer
             // 
             // so we're going to define a start and end point for our iteration
             // you can just imagine that we're looking at the top of the matrix

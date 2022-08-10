@@ -20,10 +20,22 @@ public class LinkedListNode<T> {
     public String toString() {
         var sb = new StringBuilder();
         sb.append(String.valueOf(this.data));
+        // sb.append(String.valueOf(this));
         if (this.next != null) {
             sb.append(", ");
             sb.append(String.valueOf(next));
         }
         return sb.toString();
     }
+    // public String toString() {
+    //     var sb = new StringBuilder();
+    //     sb.append(this.hashCode());
+    //     // sb.append(String.valueOf(this));
+    //     if (this.next != null) {
+    //         sb.append(", ");
+    //         // sb.append(String.valueOf(next));
+    //         sb.append(next.toString());
+    //     }
+    //     return sb.toString();
+    // }
 }

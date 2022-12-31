@@ -1,0 +1,95 @@
+{
+  "ignition": {
+    "version": "3.3.0"
+  },
+  "passwd": {
+    "users": [
+      {
+        "name": "core",
+        "sshAuthorizedKeys": [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG6nQhSJUaAUjm2axQd4YvfZLlaAnWJm8HZAxaUEeA3L admin@server"
+        ]
+      },
+      {
+        "name": "sleeper"
+      }
+    ]
+  },
+  "storage": {
+    "directories": [
+      {
+        "group": {
+          "name": "sleeper"
+        },
+        "path": "/home/sleeper/.config",
+        "user": {
+          "name": "sleeper"
+        },
+        "mode": 493
+      },
+      {
+        "group": {
+          "name": "sleeper"
+        },
+        "path": "/home/sleeper/.config/systemd",
+        "user": {
+          "name": "sleeper"
+        },
+        "mode": 493
+      },
+      {
+        "group": {
+          "name": "sleeper"
+        },
+        "path": "/home/sleeper/.config/systemd/user",
+        "user": {
+          "name": "sleeper"
+        },
+        "mode": 493
+      },
+      {
+        "group": {
+          "name": "sleeper"
+        },
+        "path": "/home/sleeper/.config/systemd/user/default.target.wants",
+        "user": {
+          "name": "sleeper"
+        },
+        "mode": 493
+      }
+    ],
+    "files": [
+      {
+        "group": {
+          "name": "sleeper"
+        },
+        "path": "/home/sleeper/.config/systemd/user/linger-example.service",
+        "user": {
+          "name": "sleeper"
+        },
+        "contents": {
+          "compression": "",
+          "source": "data:,%5BUnit%5D%0ADescription%3DA%20systemd%20user%20unit%20demo%0AAfter%3Dnetwork-online.target%0AWants%3Dnetwork-online.target%0A%5BService%5D%0AExecStart%3D%2Fusr%2Fbin%2Fsleep%20infinity%0A"
+        },
+        "mode": 420
+      },
+      {
+        "path": "/var/lib/systemd/linger/sleeper",
+        "mode": 420
+      }
+    ],
+    "links": [
+      {
+        "group": {
+          "name": "sleeper"
+        },
+        "path": "/home/sleeper/.config/systemd/user/default.target.wants/linger-example.service",
+        "user": {
+          "name": "sleeper"
+        },
+        "hard": false,
+        "target": "/home/sleeper/.config/systemd/user/linger-example.service"
+      }
+    ]
+  }
+}

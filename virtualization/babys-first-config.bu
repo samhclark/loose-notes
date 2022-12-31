@@ -1,0 +1,91 @@
+variant: fcos
+version: 1.4.0
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG6nQhSJUaAUjm2axQd4YvfZLlaAnWJm8HZAxaUEeA3L admin@server
+    - name: proxy
+systemd:
+  units:
+    - name: container-lab-caddy.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Run a preconfigured instance of Caddy
+        After=network-online.target
+        Wants=network-online.target
+
+        *** TODO: Sam, start here. Might need to regenerate the config. Command was 
+        $ podman create --name lab-caddy ghcr.io/samhclark/lab-caddy:latest
+        $ podman generate systemd --name lab-caddy
+        ***
+        [Service]
+        ExecStartPre=mkdir -p /var/lib/etcd
+        ExecStartPre=-/bin/podman kill etcd
+        ExecStartPre=-/bin/podman rm etcd
+        ExecStartPre=-/bin/podman pull quay.io/coreos/etcd
+        ExecStart=/bin/podman run --name etcd --net=host \
+                    --volume /var/lib/etcd:/etcd-data:z  \
+                    quay.io/coreos/etcd:latest /usr/local/bin/etcd              \
+                            --data-dir /etcd-data --name node1                  \
+                            --initial-advertise-peer-urls http://127.0.0.1:2380 \
+                            --listen-peer-urls http://127.0.0.1:2380            \
+                            --advertise-client-urls http://127.0.0.1:2379       \
+                            --listen-client-urls http://127.0.0.1:2379          \
+                            --initial-cluster node1=http://127.0.0.1:2380
+        ExecStop=/bin/podman stop etcd
+
+        [Install]
+        WantedBy=multi-user.target
+storage:
+  directories:
+    - path: /home/proxy/.config
+      mode: 0755
+      user:
+        name: proxy
+      group:
+        name: proxy
+    - path: /home/proxy/.config/systemd
+      mode: 0755
+      user:
+        name: proxy
+      group:
+        name: proxy
+    - path: /home/proxy/.config/systemd/user
+      mode: 0755
+      user:
+        name: proxy
+      group:
+        name: proxy
+    - path: /home/proxy/.config/systemd/user/default.target.wants
+      mode: 0755
+      user:
+        name: proxy
+      group:
+        name: proxy
+  files:
+    - path: /home/proxy/.config/systemd/user/caddy-server.service
+      mode: 0644
+      contents:
+        inline: |
+          [Unit]
+          Description=A systemd user unit demo
+          After=network-online.target
+          Wants=network-online.target
+          [Service]
+          ExecStart=/usr/bin/sleep infinity
+      user:
+        name: proxy
+      group:
+        name: proxy
+    - path: /var/lib/systemd/linger/proxy
+      mode: 0644
+  links:
+    - path: /home/proxy/.config/systemd/user/default.target.wants/caddy-server.service
+      user:
+        name: proxy
+      group:
+        name: proxy
+      target: /home/proxy/.config/systemd/user/caddy-server.service
+      hard: false

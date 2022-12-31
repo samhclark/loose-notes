@@ -1,0 +1,59 @@
+variant: fcos
+version: 1.4.0
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG6nQhSJUaAUjm2axQd4YvfZLlaAnWJm8HZAxaUEeA3L admin@server
+    - name: sleeper
+storage:
+  directories:
+    - path: /home/sleeper/.config
+      mode: 0755
+      user:
+        name: sleeper
+      group:
+        name: sleeper
+    - path: /home/sleeper/.config/systemd
+      mode: 0755
+      user:
+        name: sleeper
+      group:
+        name: sleeper
+    - path: /home/sleeper/.config/systemd/user
+      mode: 0755
+      user:
+        name: sleeper
+      group:
+        name: sleeper
+    - path: /home/sleeper/.config/systemd/user/default.target.wants
+      mode: 0755
+      user:
+        name: sleeper
+      group:
+        name: sleeper
+  files:
+    - path: /home/sleeper/.config/systemd/user/linger-example.service
+      mode: 0644
+      contents:
+        inline: |
+          [Unit]
+          Description=A systemd user unit demo
+          After=network-online.target
+          Wants=network-online.target
+          [Service]
+          ExecStart=/usr/bin/sleep infinity
+      user:
+        name: sleeper
+      group:
+        name: sleeper
+    - path: /var/lib/systemd/linger/sleeper
+      mode: 0644
+  links:
+    - path: /home/sleeper/.config/systemd/user/default.target.wants/linger-example.service
+      user:
+        name: sleeper
+      group:
+        name: sleeper
+      target: /home/sleeper/.config/systemd/user/linger-example.service
+      hard: false

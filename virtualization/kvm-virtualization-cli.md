@@ -93,3 +93,17 @@ Can't SSH in because the VM is behind NAT, so I can only SSH from the VM Host.
 But the public key I picked is the one from my laptop. 
 Probably need to recreate this, generate and use a key from the host, or un-NAT this thing. 
 
+
+
+## Maybe something worth writing down?
+
+So essentially the flow is like this:
+
+1. Download the latest Fedora CoreOS qcow2 image. 
+2. Write a Butane config (some YAML) that describes how the OS should be set up. Feels like Ansible but weirder. 
+3. Take the `butane` binary and generate an "Ignition" config file (some JSON) like `butane --pretty --strict virtualization/babys-first-config.bu --output virtualization/babys-first-config.ign`
+4. Validate the ignition config file, if you want, with `ignition-validate virtualization/babys-first-config.ign`
+5. Run a kinda complicated command on the VM Host to use that Ignition config. Which likes attaches it to a new VM that you create with `virt-install`. Basically, the same command as listed above
+6. Then, while on the VM Host, and only on the VM Host, you can SSH into the VM. If you really want. But you don't need to. The config file by itself works. Tested with `curl http://containerhost:8080` 
+
+Not really sure if I should run Caddy on the VM host and then redirect requests to individual guests VMs? Or will it be better to run all the services in a single guest including Caddy? 

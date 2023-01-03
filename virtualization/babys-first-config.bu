@@ -27,6 +27,19 @@ systemd:
 
         [Install]
         WantedBy=multi-user.target
+    - name: var-mnt-hostfs.mount
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Mount host filesystem directory
+
+        [Mount]
+        What=host_fs
+        Where=/var/mnt/host
+        Type=virtiofs
+
+        [Install]
+        WantedBy=multi-user.target
 storage:
   directories:
     - path: /home/proxy/.config

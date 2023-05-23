@@ -46,3 +46,18 @@ storage:
         inline: |
           # Tell systemd to not use a pager when printing information
           export SYSTEMD_PAGER=cat
+    # - path: /etc/NetworkManager/system-connections/enp2s0.nmconnection
+    #   mode: 0600
+    #   contents:
+    #     inline: |
+    #       [connection]
+    #       id=enp2s0
+    #       type=ethernet
+    #       interface-name=enp2s0
+    #       [ipv4]
+    #       address1=192.168.122.109/24,192.168.122.255
+    #       dhcp-hostname=containerhost
+    #       dns=192.168.122.1;
+    #       dns-search=
+    #       may-fail=false
+    #       method=manual

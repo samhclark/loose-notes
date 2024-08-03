@@ -1,5 +1,5 @@
 [Unit]
-Description=Take ZFS snapshots of %I every day, keep the last week
+Description=Take ZFS snapshot of  %I every day, keep the last week
 Documentation=man:zfs-snapshot(8)
 Requires=zfs.target
 After=zfs.target
